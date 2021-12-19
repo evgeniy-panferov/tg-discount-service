@@ -1,1 +1,0 @@
-![Вы кто такие?](https://i.ytimg.com/vi/Vb4pVYAdiLo/maxresdefault.jpg)
