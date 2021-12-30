@@ -1,6 +1,5 @@
 package com.project.tgdiscountservice.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -20,8 +19,5 @@ public class Category {
     private Long admitadId;
 
     private String language;
-
-    @JsonBackReference
-    private Partner partner;
 
 }
