@@ -7,10 +7,10 @@ import com.project.tgdiscountservice.model.Category;
 import com.project.tgdiscountservice.model.inner.InnerCallBackQuery;
 import com.project.tgdiscountservice.model.inner.InnerMessage;
 import com.project.tgdiscountservice.model.inner.InnerUpdate;
-import com.project.tgdiscountservice.service.MessagePageGeneration;
-import com.project.tgdiscountservice.util.InlineKeyboard;
+import com.project.tgdiscountservice.service.KeyboardPageGeneration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.glassfish.grizzly.utils.Pair;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -19,9 +19,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -31,7 +28,7 @@ public class CategoriesResolver implements TelegramUpdateResolver {
     private final TelegramSender sender;
     private final DiscountClientAdapterImpl discountClientAdapter;
     private final CategoryCacheImpl categoryCache;
-    private final MessagePageGeneration<Category> pageGeneration;
+    private final KeyboardPageGeneration<Category> pageGeneration;
     private final static String TYPE_RESOLVER = "/categories";
 
     @Override
@@ -39,13 +36,15 @@ public class CategoriesResolver implements TelegramUpdateResolver {
         InnerMessage tgMessage = update.getMessage();
         String command = tgMessage != null ? tgMessage.getText() : "";
         String navigateCommand = "";
-        String index = "0";
+        int index = 0;
         String callBackData = "";
-        if ((callBackData = update.getCallbackQuery().getData()) != null) {
+        InnerCallBackQuery callbackQuery;
+        if ((callbackQuery = update.getCallbackQuery()) != null) {
+            callBackData = callbackQuery.getData();
             String[] split = callBackData.split(":");
             command = split[0];
             navigateCommand = split[1];
-            index = split[2];
+            index = Integer.parseInt(split[2]);
         }
 
         if (command.equals(TYPE_RESOLVER)) {
@@ -54,19 +53,16 @@ public class CategoriesResolver implements TelegramUpdateResolver {
 
             List<Category> categories = categoryCache.findAll();
 
-            Map<String, Category> categoryByAdmitadId = pageGeneration.getPage(categories, Integer.parseInt(index), navigateCommand)
-                    .stream()
-                    .collect(Collectors.toMap(category -> String.valueOf(category.getAdmitadId()), Function.identity()));
-
-            Integer currentIndex = pageGeneration.getIndex(Integer.parseInt(index));
-
-            InlineKeyboardMarkup navigateKeyboard = InlineKeyboard.getNavigateKeyboard(TYPE_RESOLVER, currentIndex.toString());
+            Pair<InlineKeyboardMarkup, List<Category>> keyboardAndCategories = pageGeneration.getPage(categories, index, navigateCommand, TYPE_RESOLVER);
+            InlineKeyboardMarkup navigateKeyboard = keyboardAndCategories.getFirst();
+            List<Category> page = keyboardAndCategories.getSecond();
 
             StringBuilder messageBuilder = new StringBuilder();
-            categoryByAdmitadId.forEach((key, value) ->
-                    messageBuilder.append(key).append(" ")
-                            .append(value.getName())
-                            .append("\n"));
+            for (int i = 0; i < page.size(); i++) {
+                messageBuilder.append(i + 1).append(" ")
+                        .append(page.get(i).getName())
+                        .append("\n");
+            }
 
             if (tgMessage != null) {
                 sendMessage(tgMessage, messageBuilder, navigateKeyboard);
@@ -90,6 +86,7 @@ public class CategoriesResolver implements TelegramUpdateResolver {
             Message execute = sender.execute(message);
             log.info(execute.toString());
         } catch (TelegramApiException e) {
+            e.printStackTrace();
             log.error("Message sending failed - {}", e.getMessage());
         }
 
@@ -106,7 +103,8 @@ public class CategoriesResolver implements TelegramUpdateResolver {
             editMarkup.setReplyMarkup(navigateKeyboard);
             sender.execute(editMarkup);
         } catch (TelegramApiException e) {
-            log.error("Отправка сообщения не удалась");
+            e.printStackTrace();
+            log.error("Message sending failed - {}", e.getMessage());
         }
     }
 }
