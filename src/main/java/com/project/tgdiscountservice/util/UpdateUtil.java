@@ -32,4 +32,10 @@ public class UpdateUtil {
 
     }
 
+    public static InnerUpdate dtoUpdate(long chatId, String command) {
+        var innerUpdate = new InnerUpdate();
+        innerUpdate.setMessage(MessageUtil.dtoMessage(chatId, command));
+        return innerUpdate;
+    }
+
 }

@@ -35,4 +35,10 @@ public class ChatUtil {
         }
         return innerChat;
     }
+
+    public static InnerChat chatDto(Long chatId) {
+        var chat = new InnerChat();
+        chat.setId(chatId);
+        return chat;
+    }
 }

@@ -73,4 +73,11 @@ public class MessageUtil {
         innerMessage.setNewChatPhoto(message.getNewChatPhoto());
         return innerMessage;
     }
+
+    public static InnerMessage dtoMessage(Long chatId, String command) {
+        var innerMessage = new InnerMessage();
+        innerMessage.setChat(ChatUtil.chatDto(chatId));
+        innerMessage.setText("/" + command);
+        return innerMessage;
+    }
 }
