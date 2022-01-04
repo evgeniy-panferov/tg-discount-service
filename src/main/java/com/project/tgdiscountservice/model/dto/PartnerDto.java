@@ -1,5 +1,7 @@
-package com.project.tgdiscountservice.model;
+package com.project.tgdiscountservice.model.dto;
 
+import com.project.tgdiscountservice.model.Category;
+import com.project.tgdiscountservice.model.Coupon;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +12,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class Partner {
+public class PartnerDto {
 
     private Long id;
 

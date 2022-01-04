@@ -1,10 +1,10 @@
 package com.project.tgdiscountservice.client;
 
 import com.project.tgdiscountservice.cache.CategoryCacheImpl;
-import com.project.tgdiscountservice.model.Category;
-import com.project.tgdiscountservice.model.CategoryDto;
-import com.project.tgdiscountservice.model.Coupon;
-import com.project.tgdiscountservice.model.Partner;
+import com.project.tgdiscountservice.model.*;
+import com.project.tgdiscountservice.model.dto.CategoryDto;
+import com.project.tgdiscountservice.model.dto.CouponDto;
+import com.project.tgdiscountservice.model.dto.PartnerDto;
 import com.project.tgdiscountservice.util.CategoryUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -40,32 +40,32 @@ public class DiscountClientAdapterImpl implements DiscountAdapter {
         return categories;
     }
 
-    public List<Coupon> getCouponsByPartnerId(Long id) {
+    public List<CouponDto> getCouponsByPartnerId(Long id) {
         return discountServiceClient
                 .get()
                 .uri("/coupons/" + id)
                 .retrieve()
-                .bodyToFlux(Coupon.class)
+                .bodyToFlux(CouponDto.class)
                 .collectList()
                 .block();
     }
 
-    public List<Partner> getPartners() {
+    public List<PartnerDto> getPartners() {
         return discountServiceClient
                 .get()
                 .uri("/partners")
                 .retrieve()
-                .bodyToFlux(Partner.class)
+                .bodyToFlux(PartnerDto.class)
                 .collectList()
                 .block();
     }
 
-    public List<Partner> getPartnersByCategoryId(Long id) {
+    public List<PartnerDto> getPartnersByCategoryId(Long id) {
         return discountServiceClient
                 .get()
                 .uri("/partners/" + id)
                 .retrieve()
-                .bodyToFlux(Partner.class)
+                .bodyToFlux(PartnerDto.class)
                 .collectList()
                 .block();
     }

@@ -1,8 +1,8 @@
 package com.project.tgdiscountservice.client;
 
 import com.project.tgdiscountservice.model.Category;
-import com.project.tgdiscountservice.model.Coupon;
-import com.project.tgdiscountservice.model.Partner;
+import com.project.tgdiscountservice.model.dto.CouponDto;
+import com.project.tgdiscountservice.model.dto.PartnerDto;
 
 import java.util.List;
 
@@ -10,8 +10,10 @@ public interface DiscountAdapter {
 
     List<Category> getCategories();
 
-    List<Coupon> getCouponsByPartnerId(Long id);
+    List<CouponDto> getCouponsByPartnerId(Long id);
 
-    List<Partner> getPartners();
+    List<PartnerDto> getPartners();
+
+    List<PartnerDto> getPartnersByCategoryId(Long id);
 
 }

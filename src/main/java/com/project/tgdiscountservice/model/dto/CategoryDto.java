@@ -1,4 +1,4 @@
-package com.project.tgdiscountservice.model;
+package com.project.tgdiscountservice.model.dto;
 
 import lombok.Getter;
 import lombok.Setter;

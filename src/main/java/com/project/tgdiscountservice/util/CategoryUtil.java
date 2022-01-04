@@ -1,7 +1,7 @@
 package com.project.tgdiscountservice.util;
 
 import com.project.tgdiscountservice.model.Category;
-import com.project.tgdiscountservice.model.CategoryDto;
+import com.project.tgdiscountservice.model.dto.CategoryDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

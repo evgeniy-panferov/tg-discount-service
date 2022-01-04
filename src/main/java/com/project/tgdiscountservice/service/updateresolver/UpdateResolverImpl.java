@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UpdateResolverImpl implements TelegramUpdateResolver {
+public class UpdateResolverImpl extends TelegramUpdateResolver {
 
     private final List<TelegramUpdateResolver> resolvers;
 

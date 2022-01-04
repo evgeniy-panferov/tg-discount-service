@@ -1,8 +1,6 @@
 package com.project.tgdiscountservice.service.updateresolver;
 
-import com.project.tgdiscountservice.http.TelegramSender;
 import com.project.tgdiscountservice.model.Emoji;
-import com.project.tgdiscountservice.model.inner.InnerMessage;
 import com.project.tgdiscountservice.model.inner.InnerUpdate;
 import com.project.tgdiscountservice.service.sender.MessageSender;
 import lombok.RequiredArgsConstructor;
@@ -12,14 +10,14 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class StartResolver implements TelegramUpdateResolver {
+public class StartResolver extends TelegramUpdateResolver {
 
-    private final static String TYPE_RESOLVER = "/start";
+    private static final String TYPE_RESOLVER = "/start";
     private final MessageSender sender;
 
     @Override
     public void prepareMessage(InnerUpdate update) {
-        InnerMessage tgMessage = update.getMessage();
+        tgMessage = update.getMessage();
         String command = tgMessage != null ? tgMessage.getText() : "";
         if (command.equals(TYPE_RESOLVER)) {
             StringBuilder stringBuilder = new StringBuilder();
@@ -29,5 +27,6 @@ public class StartResolver implements TelegramUpdateResolver {
             sender.sendMessage(tgMessage, stringBuilder);
         }
     }
+
 }
 
