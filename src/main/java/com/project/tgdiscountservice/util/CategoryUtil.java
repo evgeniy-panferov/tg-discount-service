@@ -5,7 +5,7 @@ import com.project.tgdiscountservice.model.dto.CategoryDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -19,9 +19,9 @@ public class CategoryUtil {
         return category;
     }
 
-    public static List<Category> fromDtos(List<CategoryDto> categories) {
+    public static Set<Category> fromDtos(Set<CategoryDto> categories) {
         return categories
                 .stream().map(CategoryUtil::fromDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 }

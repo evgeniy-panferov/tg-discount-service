@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -16,7 +17,7 @@ public class CouponCacheImpl implements CouponCache {
 
     protected Cache<String, Coupon> couponCache;
 
-    {
+    public CouponCacheImpl() {
         couponCache = Caffeine.newBuilder()
                 .expireAfterWrite(Duration.ofSeconds(DEFAULT_CACHE_TIMEOUT))
                 .build();
@@ -32,6 +33,12 @@ public class CouponCacheImpl implements CouponCache {
     public void save(Coupon coupon) {
         log.info("CouponCacheImpl save - {}", coupon);
         couponCache.put(coupon.getAdmitadId().toString(), coupon);
+    }
+
+    @Override
+    public void saveAll(Map<String, Coupon> couponById) {
+        log.info("CouponCacheImpl saveAll - {}", couponById);
+        couponCache.putAll(couponById);
     }
 
     @Override

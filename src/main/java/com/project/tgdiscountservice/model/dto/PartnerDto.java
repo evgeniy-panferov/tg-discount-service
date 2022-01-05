@@ -1,7 +1,5 @@
 package com.project.tgdiscountservice.model.dto;
 
-import com.project.tgdiscountservice.model.Category;
-import com.project.tgdiscountservice.model.Coupon;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,11 +20,11 @@ public class PartnerDto {
 
     private String imageUrl;
 
-    private List<Coupon> coupons;
+    private List<CouponDto> coupons;
 
     private LocalDateTime lastUpdate;
 
-    private Set<Category> categories;
+    private Set<CategoryDto> categories;
 
     private String description;
 

@@ -1,17 +1,22 @@
 package com.project.tgdiscountservice.client;
 
 import com.project.tgdiscountservice.cache.CategoryCacheImpl;
-import com.project.tgdiscountservice.model.*;
+import com.project.tgdiscountservice.cache.CouponCacheImpl;
+import com.project.tgdiscountservice.cache.PartnerCacheImpl;
+import com.project.tgdiscountservice.model.Category;
+import com.project.tgdiscountservice.model.Coupon;
+import com.project.tgdiscountservice.model.Partner;
 import com.project.tgdiscountservice.model.dto.CategoryDto;
 import com.project.tgdiscountservice.model.dto.CouponDto;
 import com.project.tgdiscountservice.model.dto.PartnerDto;
 import com.project.tgdiscountservice.util.CategoryUtil;
+import com.project.tgdiscountservice.util.CouponUtil;
+import com.project.tgdiscountservice.util.PartnerUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -21,6 +26,9 @@ public class DiscountClientAdapterImpl implements DiscountAdapter {
 
     private final WebClient discountServiceClient;
     private final CategoryCacheImpl categoryCache;
+    private final PartnerCacheImpl partnerCache;
+    private final CouponCacheImpl couponCache;
+
 
     public List<Category> getCategories() {
 
@@ -32,41 +40,61 @@ public class DiscountClientAdapterImpl implements DiscountAdapter {
                 .collectList()
                 .block();
 
-        List<Category> categories = CategoryUtil.fromDtos(categoriesDto);
+        Set<Category> categories = CategoryUtil.fromDtos(new HashSet<>(categoriesDto));
+
         Map<String, Category> categoryById = categories.stream()
-                .collect(Collectors.toMap(category -> category.getAdmitadId().toString(), Function.identity()));
+                .collect(Collectors.toMap(category -> category.getId().toString(), Function.identity()));
 
         categoryCache.saveAll(categoryById);
-        return categories;
+        return new ArrayList<>(categories);
     }
 
-    public List<CouponDto> getCouponsByPartnerId(Long id) {
-        return discountServiceClient
+    public List<Coupon> getCouponsByPartnerId(Long id) {
+        List<CouponDto> couponsDto = discountServiceClient
                 .get()
                 .uri("/coupons/" + id)
                 .retrieve()
                 .bodyToFlux(CouponDto.class)
                 .collectList()
                 .block();
+
+        List<Coupon> coupons = CouponUtil.fromDtos(couponsDto);
+
+        Map<String, Coupon> couponById = coupons
+                .stream()
+                .collect(Collectors.toMap(coupon -> coupon.getId().toString(), Function.identity()));
+
+        couponCache.saveAll(couponById);
+        return coupons;
     }
 
-    public List<PartnerDto> getPartners() {
-        return discountServiceClient
+    public List<Partner> getPartners() {
+        List<PartnerDto> partnersDto = discountServiceClient
                 .get()
                 .uri("/partners")
                 .retrieve()
                 .bodyToFlux(PartnerDto.class)
                 .collectList()
                 .block();
+
+        List<Partner> partners = PartnerUtil.fromDtos(partnersDto);
+        Map<String, Partner> partnerById = partners
+                .stream()
+                .collect(Collectors.toMap(partner -> partner.getId().toString(), Function.identity()));
+
+        partnerCache.saveAll(partnerById);
+        return partners;
     }
 
-    public List<PartnerDto> getPartnersByCategoryId(Long id) {
-        return discountServiceClient
+    public List<Partner> getPartnersById(Long id) {
+        List<PartnerDto> partnerDtos = discountServiceClient
                 .get()
                 .uri("/partners/" + id)
                 .retrieve()
                 .bodyToFlux(PartnerDto.class)
                 .collectList()
                 .block();
+
+        return PartnerUtil.fromDtos(partnerDtos);
     }
 }

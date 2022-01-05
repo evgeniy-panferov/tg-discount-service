@@ -17,6 +17,6 @@ public interface CategoryCache extends TelegramRepository<Category> {
 
     void clear();
 
-    void invalidateMessage(String id);
+    void invalidateCategory(String id);
 
 }

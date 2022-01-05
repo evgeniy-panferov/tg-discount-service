@@ -16,10 +16,10 @@ import java.util.Map;
 public class CategoryCacheImpl implements CategoryCache {
     public static final Long DEFAULT_CACHE_TIMEOUT = 60000L;
 
-    private final Cache<String, Category> categoryCacheCache;
+    private final Cache<String, Category> categoryCache;
 
-    {
-        categoryCacheCache = Caffeine.newBuilder()
+    public CategoryCacheImpl() {
+        categoryCache = Caffeine.newBuilder()
                 .expireAfterWrite(Duration.ofSeconds(DEFAULT_CACHE_TIMEOUT))
                 .build();
     }
@@ -27,34 +27,35 @@ public class CategoryCacheImpl implements CategoryCache {
     @Override
     public Category find(String id) {
         log.info("CategoryCacheImpl find - {}", id);
-        return categoryCacheCache.get(id, null);
+        return categoryCache.get(id, null);
     }
 
     @Override
     public List<Category> findAll() {
-        return new ArrayList<>(categoryCacheCache.asMap().values());
+        return new ArrayList<>(categoryCache.asMap().values());
     }
 
     @Override
     public void save(Category category) {
         log.info("CategoryCacheImpl save - {}", category);
-        categoryCacheCache.put(category.getAdmitadId().toString(), category);
+        categoryCache.put(category.getAdmitadId().toString(), category);
     }
 
     @Override
-    public void saveAll(Map<String, Category> categoryByAdmitadId) {
-        categoryCacheCache.putAll(categoryByAdmitadId);
+    public void saveAll(Map<String, Category> categoryById) {
+        log.info("CategoryCacheImpl saveAll - {}", categoryById);
+        categoryCache.putAll(categoryById);
     }
 
     @Override
     public void clear() {
         log.info("CategoryCacheImpl clear");
-        categoryCacheCache.invalidateAll();
+        categoryCache.invalidateAll();
     }
 
     @Override
-    public void invalidateMessage(String id) {
-        log.info("CategoryCacheImpl invalidateMessage - {}", id);
-        categoryCacheCache.invalidate(id);
+    public void invalidateCategory(String id) {
+        log.info("CategoryCacheImpl invalidateCategory - {}", id);
+        categoryCache.invalidate(id);
     }
 }

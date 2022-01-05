@@ -1,8 +1,9 @@
 package com.project.tgdiscountservice.service.updateresolver;
 
-import com.project.tgdiscountservice.cache.CategoryCacheImpl;
+import com.project.tgdiscountservice.cache.PartnerCacheImpl;
 import com.project.tgdiscountservice.client.DiscountClientAdapterImpl;
 import com.project.tgdiscountservice.model.Category;
+import com.project.tgdiscountservice.model.Partner;
 import com.project.tgdiscountservice.model.inner.InnerUpdate;
 import com.project.tgdiscountservice.service.KeyboardPageGeneration;
 import com.project.tgdiscountservice.service.sender.MessageSender;
@@ -12,7 +13,10 @@ import org.glassfish.grizzly.utils.Pair;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -22,7 +26,7 @@ public class CategoriesResolver extends TelegramUpdateResolver {
 
     private final MessageSender messageSender;
     private final DiscountClientAdapterImpl discountClientAdapter;
-    private final CategoryCacheImpl categoryCache;
+    private final PartnerCacheImpl partnerCache;
     private final KeyboardPageGeneration<Category> pageGeneration;
     private static final String TYPE_RESOLVER = "/categories";
 
@@ -32,12 +36,18 @@ public class CategoriesResolver extends TelegramUpdateResolver {
         if (!variableInit(update)[0].equals(TYPE_RESOLVER)) {
             return;
         }
-        //TODO throw out client from here and make scheduler
-        discountClientAdapter.getCategories();
 
-        List<Category> categories = categoryCache.findAll();
+        List<Partner> partners = discountClientAdapter.getPartners();
 
-        Pair<InlineKeyboardMarkup, List<Category>> keyboardAndCategories = pageGeneration.getPage(categories, index, navigateCommand, TYPE_RESOLVER, 10);
+        Set<Category> categories = partnerCache.findAll()
+                .stream()
+                .filter(partner -> !partner.getCoupons().isEmpty())
+                .flatMap(partner -> partner.getCategories().stream())
+                .collect(Collectors.toSet());
+
+        Pair<InlineKeyboardMarkup, List<Category>> keyboardAndCategories = pageGeneration.getPage(
+                new ArrayList<>(categories), index, navigateCommand, TYPE_RESOLVER, 10, "0");
+
         InlineKeyboardMarkup navigateKeyboard = keyboardAndCategories.getFirst();
         List<Category> page = keyboardAndCategories.getSecond();
 

@@ -14,7 +14,7 @@ import static com.project.tgdiscountservice.util.InlineKeyboard.getNavigateKeybo
 public class KeyboardPageGeneration<T> {
 
     // TODO remove Error
-    public Pair<InlineKeyboardMarkup, List<T>> getPage(List<T> collection, Integer startIndex, String navigateCommand, String typeResolver, int pageSize) {
+    public Pair<InlineKeyboardMarkup, List<T>> getPage(List<T> collection, Integer startIndex, String navigateCommand, String typeResolver, int pageSize, String id) {
         int size = collection.size();
         if (size < pageSize) {
             pageSize = size;
@@ -24,19 +24,19 @@ public class KeyboardPageGeneration<T> {
         InlineKeyboardMarkup navigateKeyboard = null;
         if (navigateCommand.equals("-->") && startIndex <= size) {
             finishIndex = startIndex + pageSize;
-            navigateKeyboard = getNavigateKeyboard(typeResolver, String.valueOf(finishIndex));
+            navigateKeyboard = getNavigateKeyboard(typeResolver, String.valueOf(finishIndex), id);
             finishIndex = finishIndex > size ? finishIndex - (finishIndex - size) : finishIndex;
         }
 
         if (navigateCommand.equals("<--")) {
             finishIndex = startIndex - pageSize;
-            navigateKeyboard = getNavigateKeyboard(typeResolver, String.valueOf(finishIndex));
+            navigateKeyboard = getNavigateKeyboard(typeResolver, String.valueOf(finishIndex), id);
             startIndex = Math.max((finishIndex - pageSize), 0);
         }
 
         if (navigateCommand.equals("")) {
             finishIndex = startIndex + pageSize;
-            navigateKeyboard = getNavigateKeyboard(typeResolver, String.valueOf(finishIndex));
+            navigateKeyboard = getNavigateKeyboard(typeResolver, String.valueOf(finishIndex), id);
         }
 
         int finalStartIndex = Math.min(startIndex, finishIndex);

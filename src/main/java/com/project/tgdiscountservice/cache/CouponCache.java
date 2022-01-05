@@ -2,6 +2,8 @@ package com.project.tgdiscountservice.cache;
 
 import com.project.tgdiscountservice.model.Coupon;
 
+import java.util.Map;
+
 public interface CouponCache extends TelegramRepository<Coupon> {
 
     Coupon find(String id);
@@ -11,4 +13,6 @@ public interface CouponCache extends TelegramRepository<Coupon> {
     void clear();
 
     void invalidateMessage(String id);
+
+    void saveAll(Map<String, Coupon> categoryById);
 }

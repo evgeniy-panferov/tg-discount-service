@@ -58,18 +58,18 @@ public class InlineKeyboard {
         return keyboard;
     }
 
-    public static InlineKeyboardMarkup getNavigateKeyboard(String typeResolver, String index) {
+    public static InlineKeyboardMarkup getNavigateKeyboard(String typeResolver, String index, String id) {
         return InlineKeyboardMarkup.builder()
-                .keyboard(getNavigateButton(typeResolver, index))
+                .keyboard(getNavigateButton(typeResolver, index, id))
                 .build();
     }
 
-    public static List<List<InlineKeyboardButton>> getNavigateButton(String typeResolver, String index) {
+    public static List<List<InlineKeyboardButton>> getNavigateButton(String typeResolver, String index, String id) {
         List<List<InlineKeyboardButton>> keyboards = new ArrayList<>();
         List<InlineKeyboardButton> collect = Stream.of("<--", "-->")
                 .map(button -> InlineKeyboardButton.builder()
                         .text(button)
-                        .callbackData(typeResolver + ":" + button + ":" + index)
+                        .callbackData(typeResolver + "_" + button + "_" + index + "_" + id)
                         .build())
                 .collect(Collectors.toList());
         keyboards.add(collect);

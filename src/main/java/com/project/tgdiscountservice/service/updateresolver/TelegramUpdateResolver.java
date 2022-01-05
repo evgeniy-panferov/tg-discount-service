@@ -37,8 +37,9 @@ public abstract class TelegramUpdateResolver {
         if ((callbackQuery = update.getCallbackQuery()) != null) {
             callBackData = callbackQuery.getData();
             chatId = callbackQuery.getMessage().getChatId();
-            split = command.split(":");
+            split = callBackData.split("_");
             command = split[0];
+            navigateCommand = split[1];
             index = Integer.parseInt(split[2]);
         }
 
