@@ -1,5 +1,6 @@
 package com.project.tgdiscountservice.service;
 
+import com.project.tgdiscountservice.model.Emoji;
 import lombok.extern.slf4j.Slf4j;
 import org.glassfish.grizzly.utils.Pair;
 import org.springframework.stereotype.Service;
@@ -22,21 +23,21 @@ public class KeyboardPageGeneration<T> {
 
         int finishIndex = 0;
         InlineKeyboardMarkup navigateKeyboard = null;
-        if (navigateCommand.equals("-->") && startIndex <= size) {
+        if (navigateCommand.equals(Emoji.RIGHT_ARROW.toString()) && startIndex <= size) {
             finishIndex = startIndex + pageSize;
-            navigateKeyboard = getNavigateKeyboard(typeResolver, String.valueOf(finishIndex), id);
+            navigateKeyboard = getNavigateKeyboard(typeResolver, String.valueOf(finishIndex), id, Emoji.LEFT_ARROW.toString(), Emoji.RIGHT_ARROW.toString());
             finishIndex = finishIndex > size ? finishIndex - (finishIndex - size) : finishIndex;
         }
 
-        if (navigateCommand.equals("<--")) {
+        if (navigateCommand.equals(Emoji.LEFT_ARROW.toString())) {
             finishIndex = startIndex - pageSize;
-            navigateKeyboard = getNavigateKeyboard(typeResolver, String.valueOf(finishIndex), id);
+            navigateKeyboard = getNavigateKeyboard(typeResolver, String.valueOf(finishIndex), id, Emoji.LEFT_ARROW.toString(), Emoji.RIGHT_ARROW.toString());
             startIndex = Math.max((finishIndex - pageSize), 0);
         }
 
         if (navigateCommand.equals("")) {
             finishIndex = startIndex + pageSize;
-            navigateKeyboard = getNavigateKeyboard(typeResolver, String.valueOf(finishIndex), id);
+            navigateKeyboard = getNavigateKeyboard(typeResolver, String.valueOf(finishIndex), id, Emoji.LEFT_ARROW.toString(), Emoji.RIGHT_ARROW.toString());
         }
 
         int finalStartIndex = Math.min(startIndex, finishIndex);

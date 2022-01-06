@@ -1,6 +1,7 @@
 package com.project.tgdiscountservice.model.dto;
 
-import com.project.tgdiscountservice.model.Partner;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@id", scope = PartnerDto.class)
 public class CouponDto {
 
     private Long id;
@@ -19,7 +21,7 @@ public class CouponDto {
 
     private String status;
 
-    private Partner partner;
+    private PartnerDto partner;
 
     private String description;
 

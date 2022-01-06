@@ -23,7 +23,7 @@ public class PartnerUtil {
         partner.setAdmitadId(partnerDto.getAdmitadId());
         partner.setName(partnerDto.getName());
         partner.setImageUrl(partnerDto.getImageUrl());
-        partner.setCoupons(CouponUtil.fromDtos(partnerDto.getCoupons()));
+        partner.setCoupons(CouponUtil.toDtosAndSetPartner(partnerDto.getCoupons(), partner));
         partner.setLastUpdate(partnerDto.getLastUpdate());
         partner.setCategories(CategoryUtil.fromDtos(partnerDto.getCategories()));
         partner.setDescription(partnerDto.getDescription());

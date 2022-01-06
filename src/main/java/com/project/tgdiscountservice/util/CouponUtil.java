@@ -1,6 +1,7 @@
 package com.project.tgdiscountservice.util;
 
 import com.project.tgdiscountservice.model.Coupon;
+import com.project.tgdiscountservice.model.Partner;
 import com.project.tgdiscountservice.model.dto.CouponDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -13,8 +14,13 @@ public class CouponUtil {
 
 
     public static List<Coupon> fromDtos(List<CouponDto> couponDtos) {
+        Partner partner = PartnerUtil.fromDto(couponDtos.get(0).getPartner());
         return couponDtos.stream()
-                .map(CouponUtil::fromDto)
+                .map(couponDto -> {
+                    Coupon coupon = fromDto(couponDto);
+                    coupon.setPartner(partner);
+                    return coupon;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -24,7 +30,6 @@ public class CouponUtil {
         coupon.setAdmitadId(couponDto.getAdmitadId());
         coupon.setName(couponDto.getName());
         coupon.setStatus(couponDto.getStatus());
-        coupon.setPartner(couponDto.getPartner());
         coupon.setDescription(couponDto.getDescription());
         coupon.setRegions(couponDto.getRegions());
         coupon.setDiscount(couponDto.getDiscount());
@@ -38,5 +43,14 @@ public class CouponUtil {
         coupon.setImageUrl(couponDto.getImageUrl());
         coupon.setLastUpdate(couponDto.getLastUpdate());
         return coupon;
+    }
+
+    public static List<Coupon> toDtosAndSetPartner(List<CouponDto> coupons, Partner partner) {
+
+        return coupons.stream().map(couponDto -> {
+            Coupon coupon = fromDto(couponDto);
+            coupon.setPartner(partner);
+            return coupon;
+        }).collect(Collectors.toList());
     }
 }

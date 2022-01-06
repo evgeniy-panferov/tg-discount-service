@@ -1,5 +1,6 @@
 package com.project.tgdiscountservice.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +21,7 @@ public class Partner {
 
     private String imageUrl;
 
+    @JsonManagedReference
     private List<Coupon> coupons;
 
     private LocalDateTime lastUpdate;

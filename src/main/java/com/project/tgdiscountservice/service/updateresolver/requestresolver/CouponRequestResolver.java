@@ -2,6 +2,7 @@ package com.project.tgdiscountservice.service.updateresolver.requestresolver;
 
 import com.project.tgdiscountservice.client.DiscountClientAdapterImpl;
 import com.project.tgdiscountservice.model.Coupon;
+import com.project.tgdiscountservice.model.Emoji;
 import com.project.tgdiscountservice.model.inner.InnerUpdate;
 import com.project.tgdiscountservice.service.KeyboardPageGeneration;
 import com.project.tgdiscountservice.service.sender.MessageSender;
@@ -9,6 +10,7 @@ import com.project.tgdiscountservice.service.updateresolver.TelegramUpdateResolv
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.glassfish.grizzly.utils.Pair;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
@@ -23,6 +25,9 @@ public class CouponRequestResolver extends TelegramUpdateResolver {
     private final DiscountClientAdapterImpl discountClient;
     private final KeyboardPageGeneration<Coupon> pageGeneration;
     private static final String TYPE_RESOLVER = "/cp";
+
+    @Value("${image.url}")
+    private String image;
 
     @Override
     public void prepareMessage(InnerUpdate update) {
@@ -44,14 +49,23 @@ public class CouponRequestResolver extends TelegramUpdateResolver {
         InlineKeyboardMarkup navigateKeyboard = keyboardAndCategories.getFirst();
         List<Coupon> page = keyboardAndCategories.getSecond();
 
-        StringBuilder message = new StringBuilder();
         for (int i = 0; i < page.size(); i++) {
-            message.append(i + 1).append(" ")
-                    .append(page.get(i).getName()).append("\n")
-                    .append(page.get(i).getDescription()).append("\n");
-        }
+            StringBuilder message = new StringBuilder();
+            Coupon coupon = page.get(i);
+            String imageUrl = coupon.getImageUrl();
 
-        sendMessage(update, message, navigateKeyboard, messageSender);
+            if (imageUrl.contains(".svg")) {
+                imageUrl = image;
+            }
+
+            message.append("<a href=\"").append(imageUrl).append("\">").append(" ").append("</a>")
+                    .append("<b><u>").append(coupon.getPartner().getName()).append("</u></b>").append("\n")
+                    .append(coupon.getName()).append("\n")
+                    .append(coupon.getDescription()).append("\n")
+                    .append("Промокод: ").append(coupon.getPromocode()).append("\n").append("\n")
+                    .append("<a href=\"").append(coupon.getGotoLink()).append("\">").append(Emoji.RIGHT_ARROW).append("Перейти в " + coupon.getPartner().getName() + "!").append(Emoji.LEFT_ARROW).append("</a>").append("\n");
+            sendMessage(update, message, navigateKeyboard, messageSender);
+        }
     }
 
 }

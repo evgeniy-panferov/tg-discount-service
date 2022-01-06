@@ -1,5 +1,6 @@
 package com.project.tgdiscountservice.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,8 @@ public class CategoryDto {
 
     private String language;
 
+    @JsonBackReference("categories")
+    private PartnerDto partner;
 
     @Override
     public boolean equals(Object o) {

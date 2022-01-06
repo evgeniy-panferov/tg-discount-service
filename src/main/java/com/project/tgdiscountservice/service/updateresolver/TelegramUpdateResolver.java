@@ -57,6 +57,18 @@ public abstract class TelegramUpdateResolver {
             messageSender.sendAnswerCallbackQuery(message.toString(), callBackQuery, navigateKeyboard);
         }
     }
+
+    public void sendPhotoMessage(InnerUpdate update, StringBuilder message, MessageSender messageSender, String imageUrl, InlineKeyboardMarkup keyboard) {
+
+        InnerCallBackQuery callBackQuery = update.getCallbackQuery();
+        if (tgMessage != null) {
+            messageSender.sendPhotoMessage(tgMessage, message, imageUrl, keyboard);
+        }
+
+        if (callBackQuery != null) {
+            messageSender.sendAnswerCallbackQuery(message.toString(), callBackQuery);
+        }
+    }
 }
 
 

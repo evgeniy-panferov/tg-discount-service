@@ -23,7 +23,9 @@ public class StartResolver extends TelegramUpdateResolver {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(Emoji.WAVING_HAND).append("Привет!").append(Emoji.WAVING_HAND).append("\n")
                     .append(Emoji.ROBOT).append("Я бот - Промокодич, ищу выгодня предложения по просторам интеренета.").append(Emoji.ROBOT).append("\n")
-                    .append(Emoji.MAGNIFYING_GLASS_TILTED_RIGHT).append("Заходи может, что и найдешь!").append(Emoji.MAGNIFYING_GLASS_TILTED_LEFT);
+                    .append(Emoji.MAGNIFYING_GLASS_TILTED_RIGHT).append("Заходи может, что и найдешь!").append(Emoji.MAGNIFYING_GLASS_TILTED_LEFT).append("\n").append("\n")
+                    .append(Emoji.DOWN_LEFT_ARROW).append("Команды слева в меню!");
+
             sender.sendMessage(tgMessage, stringBuilder);
         }
     }
