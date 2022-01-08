@@ -2,14 +2,18 @@ package com.project.tgdiscountservice.cache;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.project.tgdiscountservice.client.DiscountClientAdapterImpl;
 import com.project.tgdiscountservice.model.Category;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -17,17 +21,30 @@ public class CategoryCacheImpl implements CategoryCache {
     public static final Long DEFAULT_CACHE_TIMEOUT = 60000L;
 
     private final Cache<String, Category> categoryCache;
+    private final DiscountClientAdapterImpl discountClientAdapter;
 
-    public CategoryCacheImpl() {
+    @PostConstruct
+    public void init() {
+        //TODO Create a service(queue or scheduler) that will update cache
+        List<Category> categories = discountClientAdapter.getCategories();
+
+        Map<String, Category> categoryById = categories.stream()
+                .collect(Collectors.toMap(category -> category.getId().toString(), Function.identity()));
+
+        saveAll(categoryById);
+    }
+
+    public CategoryCacheImpl(DiscountClientAdapterImpl discountClientAdapter) {
+        this.discountClientAdapter = discountClientAdapter;
         categoryCache = Caffeine.newBuilder()
                 .expireAfterWrite(Duration.ofSeconds(DEFAULT_CACHE_TIMEOUT))
                 .build();
     }
 
     @Override
-    public Category find(String id) {
+    public Category findCoupons(String id) {
         log.info("CategoryCacheImpl find - {}", id);
-        return categoryCache.get(id, null);
+        return categoryCache.getIfPresent(id);
     }
 
     @Override

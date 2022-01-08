@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface CategoryCache extends TelegramRepository<Category> {
 
-    Category find(String id);
+    Category findCoupons(String id);
 
     List<Category> findAll();
 

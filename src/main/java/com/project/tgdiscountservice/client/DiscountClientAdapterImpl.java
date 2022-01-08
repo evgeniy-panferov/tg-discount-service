@@ -1,8 +1,5 @@
 package com.project.tgdiscountservice.client;
 
-import com.project.tgdiscountservice.cache.CategoryCacheImpl;
-import com.project.tgdiscountservice.cache.CouponCacheImpl;
-import com.project.tgdiscountservice.cache.PartnerCacheImpl;
 import com.project.tgdiscountservice.model.Category;
 import com.project.tgdiscountservice.model.Coupon;
 import com.project.tgdiscountservice.model.Partner;
@@ -16,18 +13,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
 public class DiscountClientAdapterImpl implements DiscountAdapter {
 
     private final WebClient discountServiceClient;
-    private final CategoryCacheImpl categoryCache;
-    private final PartnerCacheImpl partnerCache;
-    private final CouponCacheImpl couponCache;
 
 
     public List<Category> getCategories() {
@@ -41,31 +36,7 @@ public class DiscountClientAdapterImpl implements DiscountAdapter {
                 .block();
 
         Set<Category> categories = CategoryUtil.fromDtos(new HashSet<>(categoriesDto));
-
-        Map<String, Category> categoryById = categories.stream()
-                .collect(Collectors.toMap(category -> category.getId().toString(), Function.identity()));
-
-        categoryCache.saveAll(categoryById);
         return new ArrayList<>(categories);
-    }
-
-    public List<Coupon> getCouponsByPartnerId(Long id) {
-        List<CouponDto> couponsDto = discountServiceClient
-                .get()
-                .uri("/coupons/" + id)
-                .retrieve()
-                .bodyToFlux(CouponDto.class)
-                .collectList()
-                .block();
-
-        List<Coupon> coupons = CouponUtil.fromDtos(couponsDto);
-
-        Map<String, Coupon> couponById = coupons
-                .stream()
-                .collect(Collectors.toMap(coupon -> coupon.getId().toString(), Function.identity()));
-
-        couponCache.saveAll(couponById);
-        return coupons;
     }
 
     public List<Partner> getPartners() {
@@ -77,13 +48,8 @@ public class DiscountClientAdapterImpl implements DiscountAdapter {
                 .collectList()
                 .block();
 
-        List<Partner> partners = PartnerUtil.fromDtos(partnersDto);
-        Map<String, Partner> partnerById = partners
-                .stream()
-                .collect(Collectors.toMap(partner -> partner.getId().toString(), Function.identity()));
+        return PartnerUtil.fromDtos(partnersDto);
 
-        partnerCache.saveAll(partnerById);
-        return partners;
     }
 
     public List<Partner> getPartnersById(Long id) {
@@ -96,5 +62,17 @@ public class DiscountClientAdapterImpl implements DiscountAdapter {
                 .block();
 
         return PartnerUtil.fromDtos(partnerDtos);
+    }
+
+    public List<Coupon> getCoupons() {
+        List<CouponDto> couponsDto = discountServiceClient
+                .get()
+                .uri("/coupons")
+                .retrieve()
+                .bodyToFlux(CouponDto.class)
+                .collectList()
+                .block();
+
+        return CouponUtil.fromDtos(couponsDto);
     }
 }

@@ -1,5 +1,6 @@
 package com.project.tgdiscountservice.service.updateresolver;
 
+import com.project.tgdiscountservice.cache.PartnerCacheImpl;
 import com.project.tgdiscountservice.client.DiscountClientAdapterImpl;
 import com.project.tgdiscountservice.model.Partner;
 import com.project.tgdiscountservice.model.inner.InnerUpdate;
@@ -21,9 +22,9 @@ public class EveryonePartnerResolver extends TelegramUpdateResolver {
 
     private static final String TYPE_RESOLVER = "/find_shops";
     private final MessageSender sender;
-    private final DiscountClientAdapterImpl discountClient;
-    @Value("${image.url}")
-    private String image;
+    private final PartnerCacheImpl partnerCache;
+    @Value("${app.host}")
+    private String host;
 
 
     @Override
@@ -33,20 +34,21 @@ public class EveryonePartnerResolver extends TelegramUpdateResolver {
         String command = tgMessage != null ? tgMessage.getText() : "";
         if (command.equals(TYPE_RESOLVER)) {
 
-            List<Partner> partners = discountClient.getPartners();
+            List<Partner> partners = partnerCache.findAll();
             for (int i = 0; i < partners.size(); i++) {
                 StringBuilder message = new StringBuilder();
                 Partner partner = partners.get(i);
                 String imageUrl = partner.getImageUrl();
                 if (imageUrl.contains(".svg")) {
-                    imageUrl = image;
+                    message.append("<a href=\"").append(host).append("/pictures?imageUrl=").append(partner.getImageUrl()).append("\">").append(" ").append("</a>");
+                } else {
+                    message.append("<a href=\"").append(partner.getImageUrl()).append("\">").append(" ").append("</a>");
                 }
 
-                message.append("<a href=\"").append(imageUrl).append("\">").append(" ").append("</a>")
-                        .append("<b><u>").append(partner.getName()).append("</b></u>").append("\n");
+
+                message.append(partner.getName()).append("\n");
                 InlineKeyboardMarkup navigateKeyboard = getNavigateCallbackKeyboard("/cp", "0", partner.getId().toString(),
                         "", "Список акций");
-                //     sendPhotoMessage(update,message,sender, imageUrl, navigateKeyboard);
                 sendMessage(update, message, navigateKeyboard, sender);
             }
         }

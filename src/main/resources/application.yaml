@@ -1,2 +1,9 @@
-image:
-  url: "https://i.pinimg.com/originals/42/91/6e/42916e95bd21d374f2790ce7bf093f22.jpg"
+app:
+  host: "https://17e5-37-145-210-98.ngrok.io"
+
+#server:
+#  ssl:
+#    key-store: classpath:keystore/localhost.p12
+#    key-store-type: pkcs12
+#    key-store-password:
+#  port: 8080

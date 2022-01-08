@@ -53,4 +53,14 @@ public class CouponUtil {
             return coupon;
         }).collect(Collectors.toList());
     }
+
+
+    public static Coupon create(String text, Coupon couponIn) {
+        var coupon = new Coupon();
+        coupon.setId(-1L);
+        coupon.setName(text);
+        coupon.setImageUrl(couponIn.getImageUrl());
+        coupon.setPartner(couponIn.getPartner());
+        return coupon;
+    }
 }

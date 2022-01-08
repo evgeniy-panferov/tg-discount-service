@@ -13,6 +13,7 @@ public class CategoryUtil {
 
     public static Category fromDto(CategoryDto dto) {
         Category category = new Category();
+        category.setId(dto.getId());
         category.setName(dto.getName());
         category.setAdmitadId(dto.getAdmitadId());
         category.setLanguage(dto.getLanguage());
@@ -23,5 +24,14 @@ public class CategoryUtil {
         return categories
                 .stream().map(CategoryUtil::fromDto)
                 .collect(Collectors.toSet());
+    }
+
+    public static Category create(String text) {
+        var category = new Category();
+        category.setId(-1L);
+        category.setName(text);
+        category.setAdmitadId(-1L);
+        category.setLanguage("RU");
+        return category;
     }
 }

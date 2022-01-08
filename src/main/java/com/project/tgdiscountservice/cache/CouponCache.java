@@ -2,13 +2,16 @@ package com.project.tgdiscountservice.cache;
 
 import com.project.tgdiscountservice.model.Coupon;
 
+import java.util.List;
 import java.util.Map;
 
 public interface CouponCache extends TelegramRepository<Coupon> {
 
-    Coupon find(String id);
+    Coupon findCoupons(String id);
 
     void save(Coupon t);
+
+    List<Coupon> findAll();
 
     void clear();
 
