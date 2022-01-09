@@ -31,9 +31,9 @@ public class DiscountClientAdapterImpl implements DiscountAdapter {
                 .get()
                 .uri("/categories")
                 .retrieve()
-                .bodyToFlux(CategoryDto.class)
-                .collectList()
-                .block();
+                .toEntityList(CategoryDto.class)
+                .block()
+                .getBody();
 
         Set<Category> categories = CategoryUtil.fromDtos(new HashSet<>(categoriesDto));
         return new ArrayList<>(categories);
@@ -44,9 +44,9 @@ public class DiscountClientAdapterImpl implements DiscountAdapter {
                 .get()
                 .uri("/partners")
                 .retrieve()
-                .bodyToFlux(PartnerDto.class)
-                .collectList()
-                .block();
+                .toEntityList(PartnerDto.class)
+                .block()
+                .getBody();
 
         return PartnerUtil.fromDtos(partnersDto);
 
@@ -57,9 +57,9 @@ public class DiscountClientAdapterImpl implements DiscountAdapter {
                 .get()
                 .uri("/partners/" + id)
                 .retrieve()
-                .bodyToFlux(PartnerDto.class)
-                .collectList()
-                .block();
+                .toEntityList(PartnerDto.class)
+                .block()
+                .getBody();
 
         return PartnerUtil.fromDtos(partnerDtos);
     }
@@ -69,9 +69,9 @@ public class DiscountClientAdapterImpl implements DiscountAdapter {
                 .get()
                 .uri("/coupons")
                 .retrieve()
-                .bodyToFlux(CouponDto.class)
-                .collectList()
-                .block();
+                .toEntityList(CouponDto.class)
+                .block()
+                .getBody();
 
         return CouponUtil.fromDtos(couponsDto);
     }

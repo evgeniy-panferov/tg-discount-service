@@ -100,7 +100,7 @@ public class CouponRequestResolver extends TelegramUpdateResolver {
                         .append("</b>").append("\n").append("\n");
 
                 String discount = Optional.ofNullable(couponPage.getDiscount()).orElse("Процент скидки не указан.");
-                message.append(CREDIT_CARD).append("Процент скидки: ").append(discount).append("\n").append("\n")
+                message.append(CREDIT_CARD).append("Размер скидки: ").append("<b>").append(discount).append("</b>").append("\n").append("\n")
 
                         .append("<a href=\"").append(couponPage.getGotoLink()).append("\">").append(RIGHT_ARROW)
 
