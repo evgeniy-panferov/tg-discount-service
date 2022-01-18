@@ -4,18 +4,15 @@ import com.project.tgdiscountservice.model.Emoji;
 import com.project.tgdiscountservice.model.inner.InnerMessage;
 import com.project.tgdiscountservice.model.inner.InnerUpdate;
 import com.project.tgdiscountservice.service.parser.Parser;
-import com.project.tgdiscountservice.service.parser.ParserService;
 import com.project.tgdiscountservice.service.sender.MessageSender;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
-public class StartResolver implements MessageResolver {
+public class HelpResolver implements MessageResolver {
 
-    private static final String TYPE_RESOLVER = "/start";
+    private static final String TYPE_RESOLVER = "/help";
     private final MessageSender sender;
 
     @Override
@@ -35,5 +32,5 @@ public class StartResolver implements MessageResolver {
             sender.sendMessage(tgMessage, stringBuilder);
         }
     }
-}
 
+}

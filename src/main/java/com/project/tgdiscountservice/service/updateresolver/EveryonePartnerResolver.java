@@ -1,9 +1,10 @@
 package com.project.tgdiscountservice.service.updateresolver;
 
 import com.project.tgdiscountservice.cache.PartnerCacheImpl;
-import com.project.tgdiscountservice.client.DiscountClientAdapterImpl;
 import com.project.tgdiscountservice.model.Partner;
 import com.project.tgdiscountservice.model.inner.InnerUpdate;
+import com.project.tgdiscountservice.service.parser.Parser;
+import com.project.tgdiscountservice.service.parser.ParserService;
 import com.project.tgdiscountservice.service.sender.MessageSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,22 +19,22 @@ import static com.project.tgdiscountservice.util.InlineKeyboard.getNavigateCallb
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class EveryonePartnerResolver extends TelegramUpdateResolver {
+public class EveryonePartnerResolver implements MessageResolver {
 
-    private static final String TYPE_RESOLVER = "/find_shops";
+    private static final String TYPE_RESOLVER = "/shops";
     private final MessageSender sender;
+    private final MessageSenderTypeUpdateChecker messageSenderTypeUpdateChecker;
+    private final ParserService factory;
     private final PartnerCacheImpl partnerCache;
     @Value("${app.host}")
     private String host;
 
 
     @Override
-    public void prepareMessage(InnerUpdate update) {
+    public void prepareMessage(InnerUpdate update, Parser parser) {
+        String command = parser.getCommand();
 
-        tgMessage = update.getMessage();
-        String command = tgMessage != null ? tgMessage.getText() : "";
         if (command.equals(TYPE_RESOLVER)) {
-
             List<Partner> partners = partnerCache.findAll();
             for (int i = 0; i < partners.size(); i++) {
                 StringBuilder message = new StringBuilder();
@@ -45,11 +46,10 @@ public class EveryonePartnerResolver extends TelegramUpdateResolver {
                     message.append("<a href=\"").append(partner.getImageUrl()).append("\">").append(" ").append("</a>");
                 }
 
-
                 message.append(partner.getName()).append("\n");
                 InlineKeyboardMarkup navigateKeyboard = getNavigateCallbackKeyboard("/cp", "0", partner.getId().toString(),
                         "", "Список акций");
-                sendMessage(update, message, navigateKeyboard, sender);
+                messageSenderTypeUpdateChecker.sendMessage(update, message, navigateKeyboard, sender);
             }
         }
     }

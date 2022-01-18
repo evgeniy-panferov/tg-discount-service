@@ -4,8 +4,9 @@ import com.project.tgdiscountservice.cache.PartnerCacheImpl;
 import com.project.tgdiscountservice.model.Coupon;
 import com.project.tgdiscountservice.model.inner.InnerUpdate;
 import com.project.tgdiscountservice.service.KeyboardPageGeneration;
+import com.project.tgdiscountservice.service.parser.Parser;
 import com.project.tgdiscountservice.service.sender.MessageSender;
-import com.project.tgdiscountservice.service.updateresolver.TelegramUpdateResolver;
+import com.project.tgdiscountservice.service.updateresolver.MessageSenderTypeUpdateChecker;
 import com.project.tgdiscountservice.util.CouponUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,28 +25,26 @@ import static com.project.tgdiscountservice.model.Emoji.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CouponRequestResolver extends TelegramUpdateResolver {
+public class CouponRequestResolver implements CallBackResolver {
 
     private final MessageSender messageSender;
     private final PartnerCacheImpl partnerCache;
     private final KeyboardPageGeneration<Coupon> pageGeneration;
+    private final MessageSenderTypeUpdateChecker messageSenderTypeUpdateChecker;
     private static final String TYPE_RESOLVER = "/cp";
 
     @Value("${app.host}")
     private String host;
 
     @Override
-    public void prepareMessage(InnerUpdate update) {
-        if (!variableInit(update)[0].equals(TYPE_RESOLVER)) {
+    public void prepareMessage(InnerUpdate update, Parser parser) {
+        String command = parser.getCommand();
+
+        if (!command.equals(TYPE_RESOLVER)) {
             return;
         }
 
-        String partnerId;
-        if (update.getMessage() != null) {
-            partnerId = split[1];
-        } else {
-            partnerId = split[3];
-        }
+        String partnerId = parser.getId();
 
         List<Coupon> coupons = new ArrayList<>(partnerCache.findCoupons(partnerId));
 
@@ -56,6 +55,9 @@ public class CouponRequestResolver extends TelegramUpdateResolver {
 
         coupons.add(0, first);
         coupons.add(end);
+
+        int index = parser.getIndex();
+        String navigateCommand = parser.getNavigateCommand();
 
         Pair<InlineKeyboardMarkup, List<Coupon>> keyboardAndCategories = pageGeneration.getPage(
                 coupons, index, navigateCommand, TYPE_RESOLVER, 1, partnerId);
@@ -108,8 +110,7 @@ public class CouponRequestResolver extends TelegramUpdateResolver {
                         .append("\n");
 
             }
-            sendMessage(update, message, navigateKeyboard, messageSender);
+            messageSenderTypeUpdateChecker.sendMessage(update, message, navigateKeyboard, messageSender);
         }
     }
-
 }

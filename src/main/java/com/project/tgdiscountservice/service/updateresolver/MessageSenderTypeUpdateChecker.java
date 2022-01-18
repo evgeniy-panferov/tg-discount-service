@@ -10,45 +10,12 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 
 @Service
 @RequiredArgsConstructor
-public abstract class TelegramUpdateResolver {
-
-    protected InnerMessage tgMessage;
-    protected String command = "";
-    protected String navigateCommand = "";
-    protected int index = 0;
-    protected String callBackData = "";
-    protected InnerCallBackQuery callbackQuery;
-    protected Long chatId = 0L;
-    protected String[] split;
-
-    public abstract void prepareMessage(InnerUpdate update);
-
-    public String[] variableInit(InnerUpdate update) {
-        tgMessage = update.getMessage();
-
-        if (tgMessage != null) {
-            split = tgMessage.getText().split("_");
-            command = split[0];
-            navigateCommand = "";
-            index = 0;
-            chatId = tgMessage.getChat().getId();
-        }
-
-        if ((callbackQuery = update.getCallbackQuery()) != null) {
-            callBackData = callbackQuery.getData();
-            chatId = callbackQuery.getMessage().getChatId();
-            split = callBackData.split("_");
-            command = split[0];
-            navigateCommand = split[1];
-            index = Integer.parseInt(split[2]);
-        }
-
-        return split;
-    }
+public class MessageSenderTypeUpdateChecker {
 
     public void sendMessage(InnerUpdate update, StringBuilder message, InlineKeyboardMarkup navigateKeyboard, MessageSender messageSender) {
 
         InnerCallBackQuery callBackQuery = update.getCallbackQuery();
+        InnerMessage tgMessage = update.getMessage();
         if (tgMessage != null) {
             messageSender.sendMessage(tgMessage, message, navigateKeyboard);
         }
@@ -61,6 +28,7 @@ public abstract class TelegramUpdateResolver {
     public void sendPhotoMessage(InnerUpdate update, StringBuilder message, MessageSender messageSender, String imageUrl, InlineKeyboardMarkup keyboard) {
 
         InnerCallBackQuery callBackQuery = update.getCallbackQuery();
+        InnerMessage tgMessage = update.getMessage();
         if (tgMessage != null) {
             messageSender.sendPhotoMessage(tgMessage, message, imageUrl, keyboard);
         }
