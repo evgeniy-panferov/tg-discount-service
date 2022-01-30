@@ -20,6 +20,7 @@ public class SVGToJpegConverter {
     public void transcodeSVGToBufferedImage(String imageUrl) {
         //Step -1: We read the input SVG document into Transcoder Input
         //We use Java NIO for this purpose
+        log.info("SVGToJpegConverter transcodeSVGToBufferedImage - {}", imageUrl);
         OutputStream pngOstream = null;
         try {
             InputStream inputStream = new URL(imageUrl).openStream();
@@ -37,6 +38,7 @@ public class SVGToJpegConverter {
             pngOstream.flush();
             pngOstream.close();
         } catch (TranscoderException | IOException e) {
+            log.error("Error: SVGToJpegConverter transcodeSVGToBufferedImage - {}", e.getMessage());
             e.printStackTrace();
         } finally {
             pngOstream.flush();

@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -35,6 +37,11 @@ public class PartnerCacheImpl implements PartnerCache {
     @PostConstruct
     public void init() {
         //TODO Create a service(queue or scheduler) that will update cache
+        ExecutorService cacheInit = Executors.newSingleThreadExecutor();
+        cacheInit.execute(this::cacheInit);
+    }
+
+    public void cacheInit() {
         List<Partner> partners = discountClientAdapter.getPartners();
         Map<String, Partner> partnerById = partners
                 .stream()
@@ -42,7 +49,6 @@ public class PartnerCacheImpl implements PartnerCache {
 
         saveAll(partnerById);
     }
-
 
     @Override
     public List<Coupon> findCoupons(String id) {
@@ -77,6 +83,7 @@ public class PartnerCacheImpl implements PartnerCache {
     @Override
     public void saveAll(Map<String, Partner> partnerById) {
         log.info("PartnerCacheImpl saveAll - {}", partnerById);
+        clear();
         partnerCache.putAll(partnerById);
     }
 }

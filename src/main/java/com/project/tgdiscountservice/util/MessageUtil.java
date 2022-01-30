@@ -3,12 +3,15 @@ package com.project.tgdiscountservice.util;
 import com.project.tgdiscountservice.model.inner.InnerMessage;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MessageUtil {
 
     public static InnerMessage fromDto(Message message) {
+        log.info("MessageUtil fromDto - {}", message);
         if (message == null) {
             return null;
         }
@@ -75,6 +78,7 @@ public class MessageUtil {
     }
 
     public static InnerMessage dtoMessage(Long chatId, String command) {
+        log.info("MessageUtil dtoMessage - {}, {}", chatId, command);
         var innerMessage = new InnerMessage();
         innerMessage.setChat(ChatUtil.chatDto(chatId));
         innerMessage.setText("/" + command);

@@ -1,11 +1,10 @@
-package com.project.tgdiscountservice.service.updateresolver;
+package com.project.tgdiscountservice.service.handlers.commands;
 
 import com.project.tgdiscountservice.cache.PartnerCacheImpl;
 import com.project.tgdiscountservice.model.Partner;
 import com.project.tgdiscountservice.model.inner.InnerUpdate;
 import com.project.tgdiscountservice.service.parser.Parser;
-import com.project.tgdiscountservice.service.parser.ParserService;
-import com.project.tgdiscountservice.service.sender.MessageSender;
+import com.project.tgdiscountservice.service.handlers.MessageSenderFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,20 +18,19 @@ import static com.project.tgdiscountservice.util.InlineKeyboard.getNavigateCallb
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class EveryonePartnerResolver implements MessageResolver {
+public class EveryonePartnerHandler implements MessageHandler {
 
     private static final String TYPE_RESOLVER = "/shops";
-    private final MessageSender sender;
-    private final MessageSenderTypeUpdateChecker messageSenderTypeUpdateChecker;
-    private final ParserService factory;
+    private final MessageSenderFacade messageSenderFacade;
     private final PartnerCacheImpl partnerCache;
     @Value("${app.host}")
     private String host;
 
 
     @Override
-    public void prepareMessage(InnerUpdate update, Parser parser) {
-        String command = parser.getCommand();
+    public void prepareMessage(InnerUpdate update, Parser parserData) {
+        log.info("EveryonePartnerHandler prepareMessage - {}, {}", update, parserData);
+        String command = parserData.getCommand();
 
         if (command.equals(TYPE_RESOLVER)) {
             List<Partner> partners = partnerCache.findAll();
@@ -49,7 +47,7 @@ public class EveryonePartnerResolver implements MessageResolver {
                 message.append(partner.getName()).append("\n");
                 InlineKeyboardMarkup navigateKeyboard = getNavigateCallbackKeyboard("/cp", "0", partner.getId().toString(),
                         "", "Список акций");
-                messageSenderTypeUpdateChecker.sendMessage(update, message, navigateKeyboard, sender);
+                messageSenderFacade.sendMessage(update, message, navigateKeyboard);
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.project.tgdiscountservice.service.updateresolver.requestresolver;
+package com.project.tgdiscountservice.service.handlers.callback;
 
 
 import com.project.tgdiscountservice.cache.PartnerCacheImpl;
@@ -6,8 +6,7 @@ import com.project.tgdiscountservice.model.Category;
 import com.project.tgdiscountservice.model.Partner;
 import com.project.tgdiscountservice.model.inner.InnerUpdate;
 import com.project.tgdiscountservice.service.parser.Parser;
-import com.project.tgdiscountservice.service.sender.MessageSender;
-import com.project.tgdiscountservice.service.updateresolver.MessageSenderTypeUpdateChecker;
+import com.project.tgdiscountservice.service.handlers.MessageSenderFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,17 +22,17 @@ import static com.project.tgdiscountservice.util.InlineKeyboard.getNavigateCallb
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class PartnerRequestResolver implements CallBackResolver {
+public class PartnerRequestHandler implements CallBackHandler {
 
-    private final MessageSender messageSender;
     private final PartnerCacheImpl partnerCache;
-    private final MessageSenderTypeUpdateChecker messageSenderTypeUpdateChecker;
+    private final MessageSenderFacade messageSenderFacade;
     private static final String TYPE_RESOLVER = "/cr";
 
     @Value("${app.host}")
     private String host;
 
     public void prepareMessage(InnerUpdate update, Parser parser) {
+        log.info("PartnerRequestHandler prepareMessage - {}, {}", update, parser);
         String command = parser.getCommand();
 
         if (!command.equals(TYPE_RESOLVER)) {
@@ -66,7 +65,7 @@ public class PartnerRequestResolver implements CallBackResolver {
             message.append("<b><u>").append(partner.getName()).append("</u></b>").append("\n");
             InlineKeyboardMarkup navigateKeyboard = getNavigateCallbackKeyboard("/cp", "0", partner.getId().toString(),
                     "", "Список акций");
-            messageSenderTypeUpdateChecker.sendMessage(update, message, navigateKeyboard, messageSender);
+            messageSenderFacade.sendMessage(update, message, navigateKeyboard);
         }
     }
 

@@ -1,10 +1,9 @@
-package com.project.tgdiscountservice.service.updateresolver;
+package com.project.tgdiscountservice.service.handlers.commands;
 
 import com.project.tgdiscountservice.model.Emoji;
 import com.project.tgdiscountservice.model.inner.InnerMessage;
 import com.project.tgdiscountservice.model.inner.InnerUpdate;
 import com.project.tgdiscountservice.service.parser.Parser;
-import com.project.tgdiscountservice.service.parser.ParserService;
 import com.project.tgdiscountservice.service.sender.MessageSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,14 +12,15 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class StartResolver implements MessageResolver {
+public class StartHandler implements MessageHandler {
 
     private static final String TYPE_RESOLVER = "/start";
     private final MessageSender sender;
 
     @Override
-    public void prepareMessage(InnerUpdate update, Parser parser) {
-        String command = parser.getCommand();
+    public void prepareMessage(InnerUpdate update, Parser parserData) {
+        log.info("StartHandler prepareMessage - {}, {}", update, parserData);
+        String command = parserData.getCommand();
 
         if (command.equals(TYPE_RESOLVER)) {
             StringBuilder stringBuilder = new StringBuilder();

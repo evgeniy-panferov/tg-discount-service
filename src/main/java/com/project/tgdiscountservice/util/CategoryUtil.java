@@ -4,14 +4,17 @@ import com.project.tgdiscountservice.model.Category;
 import com.project.tgdiscountservice.model.dto.CategoryDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CategoryUtil {
 
     public static Category fromDto(CategoryDto dto) {
+        log.info("CategoryUtil fromDto - {}", dto);
         Category category = new Category();
         category.setId(dto.getId());
         category.setName(dto.getName());
@@ -21,6 +24,7 @@ public class CategoryUtil {
     }
 
     public static Set<Category> fromDtos(Set<CategoryDto> categories) {
+        log.info("CategoryUtil fromDtos - {}", categories);
         return categories
                 .stream().map(CategoryUtil::fromDto)
                 .collect(Collectors.toSet());

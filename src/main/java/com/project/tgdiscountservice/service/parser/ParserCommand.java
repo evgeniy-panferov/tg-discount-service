@@ -1,11 +1,13 @@
 package com.project.tgdiscountservice.service.parser;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Getter
 public enum ParserCommand {
     CALLBACK("callback", new CallBackParser()),
@@ -23,6 +25,7 @@ public enum ParserCommand {
     }
 
     public static Parser getParserByCommand(String command) {
+        log.info("ParserCommand getParserByCommand - {}", command);
         return parserByCommand.get(command);
     }
 }

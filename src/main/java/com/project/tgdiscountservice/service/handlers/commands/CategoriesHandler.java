@@ -1,15 +1,15 @@
-package com.project.tgdiscountservice.service.updateresolver;
+package com.project.tgdiscountservice.service.handlers.commands;
 
 import com.project.tgdiscountservice.cache.PartnerCacheImpl;
 import com.project.tgdiscountservice.model.Category;
+import com.project.tgdiscountservice.model.TgPage;
 import com.project.tgdiscountservice.model.inner.InnerUpdate;
 import com.project.tgdiscountservice.service.KeyboardPageGeneration;
 import com.project.tgdiscountservice.service.parser.Parser;
-import com.project.tgdiscountservice.service.sender.MessageSender;
+import com.project.tgdiscountservice.service.handlers.MessageSenderFacade;
 import com.project.tgdiscountservice.util.CategoryUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.glassfish.grizzly.utils.Pair;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
@@ -23,17 +23,17 @@ import static com.project.tgdiscountservice.model.Emoji.STAR;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CategoriesResolver implements MessageResolver {
+public class CategoriesHandler implements MessageHandler {
 
-    private final MessageSender messageSender;
     private final PartnerCacheImpl partnerCache;
-    private final MessageSenderTypeUpdateChecker messageSenderTypeUpdateChecker;
+    private final MessageSenderFacade messageSenderFacade;
     private final KeyboardPageGeneration<Category> pageGeneration;
     private static final String TYPE_RESOLVER = "/categories";
 
     @Override
-    public void prepareMessage(InnerUpdate update, Parser parser) {
-        String command = parser.getCommand();
+    public void prepareMessage(InnerUpdate update, Parser parserData) {
+        log.info("CategoriesHandler prepareMessage - {}, {}", update, parserData);
+        String command = parserData.getCommand();
 
         if (!command.equals(TYPE_RESOLVER)) {
             return;
@@ -49,17 +49,17 @@ public class CategoriesResolver implements MessageResolver {
         categories.add(0, CategoryUtil.create("<b>Первая страничка.</b>\n"));
         categories.add(CategoryUtil.create("<b>Последняя страничка.</b>\n"));
 
-        int index = parser.getIndex();
-        String navigateCommand = parser.getNavigateCommand();
-        Pair<InlineKeyboardMarkup, List<Category>> keyboardAndCategories = pageGeneration.getPage(
+        int index = parserData.getIndex();
+        String navigateCommand = parserData.getNavigateCommand();
+        TgPage<Category> page = pageGeneration.getPage(
                 categories, index, navigateCommand, TYPE_RESOLVER, 10, "0");
 
-        InlineKeyboardMarkup navigateKeyboard = keyboardAndCategories.getFirst();
-        List<Category> page = keyboardAndCategories.getSecond();
+        InlineKeyboardMarkup navigateKeyboard = page.getInlineKeyboardMarkup();
+        List<Category> categoryList = page.getPage();
 
         StringBuilder message = new StringBuilder();
-        for (int i = 0; i < page.size(); i++) {
-            Category pageCategory = page.get(i);
+        for (int i = 0; i < categoryList.size(); i++) {
+            Category pageCategory = categoryList.get(i);
 
             if (pageCategory.getId().equals(-1L)) {
                 message.append("\n")
@@ -76,7 +76,7 @@ public class CategoriesResolver implements MessageResolver {
         }
         categories.remove(0);
         categories.remove(categories.size() - 1);
-        messageSenderTypeUpdateChecker.sendMessage(update, message, navigateKeyboard, messageSender);
+        messageSenderFacade.sendMessage(update, message, navigateKeyboard);
     }
 
 }

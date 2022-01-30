@@ -1,8 +1,8 @@
 package com.project.tgdiscountservice.service;
 
 import com.project.tgdiscountservice.model.Emoji;
+import com.project.tgdiscountservice.model.TgPage;
 import lombok.extern.slf4j.Slf4j;
-import org.glassfish.grizzly.utils.Pair;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
@@ -15,7 +15,8 @@ import static com.project.tgdiscountservice.util.InlineKeyboard.getNavigateKeybo
 public class KeyboardPageGeneration<T> {
 
     // TODO remove Error
-    public Pair<InlineKeyboardMarkup, List<T>> getPage(List<T> collection, Integer startIndex, String navigateCommand, String typeResolver, int pageSize, String id) {
+    public TgPage<T> getPage(List<T> collection, Integer startIndex, String navigateCommand, String typeResolver, int pageSize, String id) {
+        log.info("KeyboardPageGeneration getPage - {}, {}, {}, {}, {}, {}", collection, startIndex, navigateCommand, typeResolver, pageSize, id);
         int size = collection.size();
         if (size < pageSize) {
             pageSize = size;
@@ -42,8 +43,11 @@ public class KeyboardPageGeneration<T> {
 
         int finalStartIndex = Math.min(startIndex, finishIndex);
         int finalEndIndex = Math.max(startIndex, finishIndex);
-
         List<T> page = collection.subList(finalStartIndex, finalEndIndex);
-        return new Pair<>(navigateKeyboard, page);
+
+        TgPage<T> tgPage = new TgPage<>();
+        tgPage.setInlineKeyboardMarkup(navigateKeyboard);
+        tgPage.setPage(page);
+        return tgPage;
     }
 }

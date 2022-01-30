@@ -12,6 +12,8 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -34,6 +36,12 @@ public class CouponCacheImpl implements CouponCache {
     @PostConstruct
     public void init() {
         //TODO Create a service(queue or scheduler) that will update cache
+
+        ExecutorService cacheInit = Executors.newSingleThreadExecutor();
+        cacheInit.execute(this::cacheInit);
+    }
+
+    public void cacheInit() {
         List<Coupon> coupons = discountClientAdapter.getCoupons();
 
         Map<String, Coupon> couponById = coupons
@@ -64,6 +72,7 @@ public class CouponCacheImpl implements CouponCache {
     @Override
     public void saveAll(Map<String, Coupon> couponById) {
         log.info("CouponCacheImpl saveAll - {}", couponById);
+        clear();
         couponCache.putAll(couponById);
     }
 

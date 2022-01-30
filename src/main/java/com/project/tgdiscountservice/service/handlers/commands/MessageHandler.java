@@ -1,8 +1,8 @@
-package com.project.tgdiscountservice.service.updateresolver;
+package com.project.tgdiscountservice.service.handlers.commands;
 
 import com.project.tgdiscountservice.model.inner.InnerUpdate;
 import com.project.tgdiscountservice.service.parser.Parser;
 
-public interface MessageResolver {
+public interface MessageHandler {
     void prepareMessage(InnerUpdate update, Parser parser);
 }

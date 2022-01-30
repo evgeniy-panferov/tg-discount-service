@@ -1,6 +1,6 @@
 package com.project.tgdiscountservice.service;
 
-import com.project.tgdiscountservice.service.updateresolver.UpdateResolverImpl;
+import com.project.tgdiscountservice.service.handlers.UpdateResolverImpl;
 import com.project.tgdiscountservice.util.UpdateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,6 @@ public class TelegramUpdateChecker {
 
     public void resolveUpdate(Update update) {
         callbackResolver.prepareMessage(UpdateUtil.fromDto(update));
-
     }
 
 }

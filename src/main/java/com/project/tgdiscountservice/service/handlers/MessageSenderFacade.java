@@ -1,4 +1,4 @@
-package com.project.tgdiscountservice.service.updateresolver;
+package com.project.tgdiscountservice.service.handlers;
 
 import com.project.tgdiscountservice.model.inner.InnerCallBackQuery;
 import com.project.tgdiscountservice.model.inner.InnerMessage;
@@ -6,13 +6,19 @@ import com.project.tgdiscountservice.model.inner.InnerUpdate;
 import com.project.tgdiscountservice.service.sender.MessageSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.inlinequery.InlineQuery;
+import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResult;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MessageSenderTypeUpdateChecker {
+public class MessageSenderFacade {
 
-    public void sendMessage(InnerUpdate update, StringBuilder message, InlineKeyboardMarkup navigateKeyboard, MessageSender messageSender) {
+    private final MessageSender messageSender;
+
+    public void sendMessage(InnerUpdate update, StringBuilder message, InlineKeyboardMarkup navigateKeyboard) {
 
         InnerCallBackQuery callBackQuery = update.getCallbackQuery();
         InnerMessage tgMessage = update.getMessage();
@@ -25,18 +31,14 @@ public class MessageSenderTypeUpdateChecker {
         }
     }
 
-    public void sendPhotoMessage(InnerUpdate update, StringBuilder message, MessageSender messageSender, String imageUrl, InlineKeyboardMarkup keyboard) {
-
-        InnerCallBackQuery callBackQuery = update.getCallbackQuery();
-        InnerMessage tgMessage = update.getMessage();
-        if (tgMessage != null) {
-            messageSender.sendPhotoMessage(tgMessage, message, imageUrl, keyboard);
-        }
-
-        if (callBackQuery != null) {
-            messageSender.sendAnswerCallbackQuery(message.toString(), callBackQuery);
-        }
+    public void sendMessage(InnerMessage tgMessage, StringBuilder messageBuilder) {
+        messageSender.sendMessage(tgMessage, messageBuilder);
     }
+
+    public void sendInlineQuery(List<InlineQueryResult> resultList, InlineQuery inlineQuery){
+        messageSender.sendInlineQuery(resultList, inlineQuery);
+    }
+
 }
 
 

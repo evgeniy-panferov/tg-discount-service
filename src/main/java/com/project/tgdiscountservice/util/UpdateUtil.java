@@ -3,12 +3,15 @@ package com.project.tgdiscountservice.util;
 import com.project.tgdiscountservice.model.inner.InnerUpdate;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UpdateUtil {
 
     public static InnerUpdate fromDto(Update update) {
+        log.info("UpdateUtil fromDto - {}", update);
         if (update == null) {
             return null;
         }
@@ -33,6 +36,7 @@ public class UpdateUtil {
     }
 
     public static InnerUpdate dtoUpdate(long chatId, String command) {
+        log.info("UpdateUtil dtoUpdate - {}, {}", chatId, command);
         var innerUpdate = new InnerUpdate();
         innerUpdate.setMessage(MessageUtil.dtoMessage(chatId, command));
         return innerUpdate;

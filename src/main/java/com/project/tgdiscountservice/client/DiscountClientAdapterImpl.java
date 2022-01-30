@@ -1,5 +1,6 @@
 package com.project.tgdiscountservice.client;
 
+import com.project.tgdiscountservice.client.request.TgRequest;
 import com.project.tgdiscountservice.model.Category;
 import com.project.tgdiscountservice.model.Coupon;
 import com.project.tgdiscountservice.model.Partner;
@@ -12,18 +13,16 @@ import com.project.tgdiscountservice.util.PartnerUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.util.retry.Retry;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.Duration;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
 public class DiscountClientAdapterImpl implements DiscountAdapter {
 
     private final WebClient discountServiceClient;
-
 
     public List<Category> getCategories() {
 
@@ -32,6 +31,7 @@ public class DiscountClientAdapterImpl implements DiscountAdapter {
                 .uri("/categories")
                 .retrieve()
                 .toEntityList(CategoryDto.class)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(5)))
                 .block()
                 .getBody();
 
@@ -45,6 +45,7 @@ public class DiscountClientAdapterImpl implements DiscountAdapter {
                 .uri("/partners")
                 .retrieve()
                 .toEntityList(PartnerDto.class)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(5)))
                 .block()
                 .getBody();
 
@@ -58,6 +59,7 @@ public class DiscountClientAdapterImpl implements DiscountAdapter {
                 .uri("/partners/" + id)
                 .retrieve()
                 .toEntityList(PartnerDto.class)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(5)))
                 .block()
                 .getBody();
 
@@ -70,9 +72,25 @@ public class DiscountClientAdapterImpl implements DiscountAdapter {
                 .uri("/coupons")
                 .retrieve()
                 .toEntityList(CouponDto.class)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(5)))
                 .block()
                 .getBody();
 
         return CouponUtil.fromDtos(couponsDto);
     }
+
+    public List<Coupon> searchCoupons(TgRequest request) {
+        List<CouponDto> couponsDto = Objects.requireNonNull(discountServiceClient
+                .post()
+                .uri("/coupons/search")
+                .bodyValue(request)
+                .retrieve()
+                .toEntityList(CouponDto.class)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(5)))
+                .block())
+                .getBody();
+
+        return CouponUtil.fromDtos(couponsDto);
+    }
+
 }
