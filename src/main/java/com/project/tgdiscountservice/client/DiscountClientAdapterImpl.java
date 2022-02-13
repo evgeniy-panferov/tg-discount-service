@@ -80,17 +80,16 @@ public class DiscountClientAdapterImpl implements DiscountAdapter {
     }
 
     public List<Coupon> searchCoupons(TgRequest request) {
-        List<CouponDto> couponsDto = Objects.requireNonNull(discountServiceClient
+        List<CouponDto> couponsDto = discountServiceClient
                 .post()
                 .uri("/coupons/search")
                 .bodyValue(request)
                 .retrieve()
                 .toEntityList(CouponDto.class)
-                .retryWhen(Retry.backoff(3, Duration.ofSeconds(5)))
-                .block())
+                .block()
                 .getBody();
 
-        return CouponUtil.fromDtos(couponsDto);
+        return couponsDto.isEmpty()? Collections.emptyList() : CouponUtil.fromDtos(couponsDto);
     }
 
 }

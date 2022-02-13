@@ -30,7 +30,6 @@ public class PartnerCacheImpl implements PartnerCache {
     public PartnerCacheImpl(DiscountClientAdapterImpl discountClientAdapter) {
         this.discountClientAdapter = discountClientAdapter;
         partnerCache = Caffeine.newBuilder()
-                .expireAfterWrite(Duration.ofSeconds(DEFAULT_CACHE_TIMEOUT))
                 .build();
     }
 
@@ -45,6 +44,7 @@ public class PartnerCacheImpl implements PartnerCache {
         List<Partner> partners = discountClientAdapter.getPartners();
         Map<String, Partner> partnerById = partners
                 .stream()
+                .filter(partner -> !partner.getCoupons().isEmpty())
                 .collect(Collectors.toMap(partner -> partner.getId().toString(), Function.identity()));
 
         saveAll(partnerById);

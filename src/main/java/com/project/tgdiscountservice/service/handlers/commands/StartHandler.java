@@ -25,7 +25,7 @@ public class StartHandler implements MessageHandler {
         if (command.equals(TYPE_RESOLVER)) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(Emoji.WAVING_HAND).append("Привет!").append(Emoji.WAVING_HAND).append("\n")
-                    .append(Emoji.ROBOT).append("Я бот - Промокодич, ищу выгодня предложения по просторам интеренета.").append(Emoji.ROBOT).append("\n")
+                    .append(Emoji.ROBOT).append("Я бот - Промокод, ищу выгодня предложения по просторам интеренета.").append(Emoji.ROBOT).append("\n")
                     .append(Emoji.MAGNIFYING_GLASS_TILTED_RIGHT).append("Заходи может, что и найдешь!").append(Emoji.MAGNIFYING_GLASS_TILTED_LEFT).append("\n").append("\n")
                     .append("Вводи в строку @freeskidka_bot + то, что ищешь и мы попробуем найти.").append("\n").append("\n")
 

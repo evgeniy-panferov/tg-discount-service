@@ -67,4 +67,13 @@ public class CouponUtil {
         coupon.setPartner(couponIn.getPartner());
         return coupon;
     }
+
+    public static Coupon create(String name, String description) {
+        log.info("CouponUtil create - {}", name);
+        var coupon = new Coupon();
+        coupon.setId(-1L);
+        coupon.setName(name);
+        coupon.setDescription(description);
+        return coupon;
+    }
 }

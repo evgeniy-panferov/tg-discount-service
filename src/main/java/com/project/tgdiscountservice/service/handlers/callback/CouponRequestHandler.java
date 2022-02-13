@@ -6,21 +6,16 @@ import com.project.tgdiscountservice.model.TgPage;
 import com.project.tgdiscountservice.model.inner.InnerUpdate;
 import com.project.tgdiscountservice.service.CouponTextCreator;
 import com.project.tgdiscountservice.service.KeyboardPageGeneration;
-import com.project.tgdiscountservice.service.parser.Parser;
 import com.project.tgdiscountservice.service.handlers.MessageSenderFacade;
+import com.project.tgdiscountservice.service.parser.Parser;
 import com.project.tgdiscountservice.util.CouponUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
-import static com.project.tgdiscountservice.model.Emoji.*;
 
 @Slf4j
 @Service
