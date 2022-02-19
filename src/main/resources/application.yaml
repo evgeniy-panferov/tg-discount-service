@@ -1,5 +1,5 @@
 app:
-  host: "https://d7cb-37-145-210-98.ngrok.io"
+  host: "https://9e0e-37-145-210-98.ngrok.io"
 
 #server:
 #  ssl:
@@ -7,3 +7,7 @@ app:
 #    key-store-type: pkcs12
 #    key-store-password:
 #  port: 8080
+
+telegram:
+  botUsername: ${botUsername}
+  botToken: ${botToken}
