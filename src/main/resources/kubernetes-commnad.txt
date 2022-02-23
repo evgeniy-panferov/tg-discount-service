@@ -1,0 +1,1 @@
+kubectl create configmap tg-discount-config --from-file=src/main/resources/kube-config/tg-discount-config.yaml
