@@ -1,12 +1,8 @@
 app:
   host: "https://9e0e-37-145-210-98.ngrok.io"
 
-#server:
-#  ssl:
-#    key-store: classpath:keystore/localhost.p12
-#    key-store-type: pkcs12
-#    key-store-password:
-#  port: 8080
+discount:
+  service: ${external}
 
 telegram:
   botUsername: ${botUsername}

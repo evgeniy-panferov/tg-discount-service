@@ -4,6 +4,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.apache.http.HttpHeaders;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -18,6 +19,9 @@ import java.time.Duration;
 @Configuration
 public class ClientConfiguration {
 
+    @Value("${discount.external}")
+    private String host;
+
     @Bean
     WebClient discountServiceClient() {
         HttpClient httpClient = HttpClient.create()
@@ -26,7 +30,7 @@ public class ClientConfiguration {
                 .doOnConnected(conn -> conn.addHandlerLast(new ReadTimeoutHandler(60))
                         .addHandlerLast(new WriteTimeoutHandler(60)));
         return WebClient.builder()
-                .baseUrl("http://localhost:8081")
+                .baseUrl(host)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .exchangeStrategies(ExchangeStrategies.builder()
