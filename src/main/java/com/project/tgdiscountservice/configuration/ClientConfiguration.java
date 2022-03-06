@@ -19,7 +19,7 @@ import java.time.Duration;
 @Configuration
 public class ClientConfiguration {
 
-    @Value("${discount.external}")
+    @Value("${discount.service}")
     private String host;
 
     @Bean
